@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<%- include('head'); -%>
+		<title>Zenius Center | Pendaftaran</title>
+	</head>
+	<body>
+		<%- include('header'); -%>
+		<main id="main" class="content-space">
+			<div class="container">
+				<div class="row">
+					<div class="col-12">
+						<form action="/register-request" method="POST">
+							<input required type="text" name="nama" placeholder="Nama">
+							<input required type="text" name="alamat" placeholder="Alamat">
+							<input required type="text" name="email" placeholder="Email">
+							<input required type="number" name="phone" placeholder="Nomor Hp">
+							<input required type="text" name="sekolah" placeholder="Sekolah">
+							<input required type="text" name="kelas" placeholder="Kelas">
+							<input required type="text" name="jurusan" placeholder="Jurusan">
+							<input required type="text" name="ig" placeholder="Instagram">
+							<button type="Submit" class="btn btn-primary">Register</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</main>
+		<%- include('footer'); -%>
+		<a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+		<!-- Uncomment below i you want to use a preloader -->
+		<!-- <div id="preloader"></div> -->
+		<%- include('script'); -%>
+		<script>
+			$('#register-menu').addClass('menu-active');
+		</script>
+	</body>
+</html>
