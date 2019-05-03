@@ -1,3 +1,8 @@
 .content-space {
-	margin-top:70px;
+	margin-top:120px;
+	margin-bottom:30px;
+}
+
+#register-page input{
+	width:90%;
 }

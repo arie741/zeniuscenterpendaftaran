@@ -6,20 +6,111 @@
 	</head>
 	<body>
 		<%- include('header'); -%>
-		<main id="main" class="content-space">
+		<main id="register-page" class="content-space">
 			<div class="container">
+				<div class="row">
+					<header class="section-header wow ">
+						<h3>Pendaftaran</h3>
+					</header>
+				</div>
 				<div class="row">
 					<div class="col-12">
 						<form action="/register-request" method="POST">
-							<input required type="text" name="nama" placeholder="Nama">
-							<input required type="text" name="alamat" placeholder="Alamat">
-							<input required type="text" name="email" placeholder="Email">
-							<input required type="number" name="phone" placeholder="Nomor Hp">
-							<input required type="text" name="sekolah" placeholder="Sekolah">
-							<input required type="text" name="kelas" placeholder="Kelas">
-							<input required type="text" name="jurusan" placeholder="Jurusan">
-							<input required type="text" name="ig" placeholder="Instagram">
-							<button type="Submit" class="btn btn-primary">Register</button>
+							<div class="row">
+								<div class="col-lg-2">
+									<h5>Nama</h5>
+								</div>
+								<div class="col-lg-6">
+									: <input maxlength="50" required type="text" name="nama" placeholder="Nama">
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-lg-2">
+									<h5>Alamat</h5>
+								</div>
+								<div class="col-lg-6">
+									: <input maxlength="50" required type="text" name="alamat" placeholder="Alamat">
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-lg-2">
+									<h5>Email</h5>
+								</div>
+								<div class="col-lg-6">
+									: <input maxlength="50" required type="email" name="email" placeholder="Email">
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-lg-2">
+									<h5>Nomor Hp</h5>
+								</div>
+								<div class="col-lg-6">
+									: <input maxlength="50" required type="number" name="phone" placeholder="Nomor Hp">
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-lg-2">
+									<h5>Sekolah</h5>
+								</div>
+								<div class="col-lg-6">
+									: <input maxlength="50" required type="text" name="sekolah" placeholder="Sekolah">
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-lg-2">
+									<h5>Kelas</h5>
+								</div>
+								<div class="col-lg-6">
+									: <input maxlength="50" required type="text" name="kelas" placeholder="Kelas">
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-lg-2">
+									<h5>Jurusan</h5>
+								</div>
+								<div class="col-lg-6">
+									: <input maxlength="50" required type="text" name="jurusan" placeholder="Jurusan">
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-lg-2">
+									<h5>Instagram</h5>
+								</div>
+								<div class="col-lg-6">
+									: <input maxlength="50" required type="text" name="ig" placeholder="Instagram">
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-lg-2">
+									<h5>Password</h5>
+								</div>
+								<div class="col-lg-6">
+									: <input maxlength="50" required type="password" name="pwd" placeholder="Password">
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-lg-2">
+									<h5>Ulangi Password</h5>
+								</div>
+								<div class="col-lg-6">
+									: <input maxlength="50" required type="password" name="upwd" placeholder="Ulangi Password">
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-12">
+									<% if (ermes){ %>
+									<div class="alert alert-danger" role="alert">
+										<%= ermes %>
+									</div>							
+									<%};%>		
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-lg-2"></div>
+								<div class="col-lg-6">
+									<button type="Submit" class="btn btn-primary">Daftar</button>
+								</div>
+							</div>
 						</form>
 					</div>
 				</div>
