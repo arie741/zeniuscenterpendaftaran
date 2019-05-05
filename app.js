@@ -31,7 +31,7 @@ var pgPool = new pg.Pool({
 });  
 
 const app = express()
-const port = 3000
+const port = 62542
 
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
@@ -39,13 +39,36 @@ app.use("/", express.static(__dirname + '/views')); // Set all static assets in 
 app.set('views', './views'); // Set all static assets in /views folder
 app.set('view engine', 'ejs'); //Set all html extension to ejs(embedded javascript https://ejs.co/)
 
-//Routes
-app.get('/', (req, res) => 
-	res.render('home'))
+//Express Sessions
+app.use(ExpressSessions({
+  store: new pgSession({
+	    pool : pgPool,                // Connection pool
+	    tableName : 'session'   // Use another table-name than the default "session" one
+  }),
+  secret: 'zeniuscentersecretkeyadmin2019',
+  resave: false,
+  cookie: { maxAge: 24 * 60 * 60 * 1000 }, // 1 day
+  saveUninitialized:false
+}));
 
+//Routes
+
+//home
+app.get('/', function(req, res, next){
+	if(req.session.uniqueId){
+		res.render('home', {uuid: enc.decrypt(req.session.uniqueId)});
+	}
+})
+
+//home end
+//Registration
 app.get('/register', recaptcha.middleware.render, function (req, res, next) {
-  var msg = req.query.valid;
-  res.render('register', {ermes: msg, captcha:res.recaptcha});
+	if(req.session.uniqueId){
+		res.redirect('/');
+	} else {
+		var msg = req.query.valid;
+  		res.render('register', {ermes: msg, captcha:res.recaptcha});		
+	}  
 })
 
 app.post('/register-request', recaptcha.middleware.verify, function(req, res, next) {
@@ -60,11 +83,13 @@ app.post('/register-request', recaptcha.middleware.verify, function(req, res, ne
 	        var str = encodeURIComponent('Email sudah terdaftar');
 	        res.redirect('/register/?valid=' + str);
 	      } else {//If everything is good
-	        db.query(db.addProfile, [req.body.nama, req.body.alamat, req.body.phone, req.body.email, req.body.sekolah, req.body.kelas, req.body.jurusan, req.body.ig, enc.encrypt(req.body.pwd), uuidv1()], (err, resp) => {
+	      	var myuuid = uuidv1();
+	        db.query(db.addProfile, [req.body.nama, req.body.alamat, req.body.phone, req.body.email, req.body.sekolah, req.body.kelas, req.body.jurusan, req.body.ig, enc.encrypt(req.body.pwd), myuuid], (err, resp) => {
 	          if (err) {
 	            return next(err)
 	          }
-	          res.send('Data terkirim');
+	          req.session.uniqueId = enc.encrypt(myuuid);
+	          res.redirect('/profile/' + myuuid)
 	        })
 	      } 
 	    }) 
@@ -77,8 +102,22 @@ app.post('/register-request', recaptcha.middleware.verify, function(req, res, ne
 	res.redirect('/register/?valid=' + str);
   }  
 })
-
-
+//Registration end
+//Profile
+app.get('/profile/:uuid', function(req, res, next) {	
+	if(enc.decrypt(req.session.uniqueId) === req.params.uuid){
+		db.query(db.findProfileByUuid, [req.params.uuid], (err, resp) => {
+			if (err) {
+			 return next(err);
+			}
+			var arr = resp.rows[0];
+			res.render('profile', {uuid: enc.decrypt(req.session.uniqueId), nama: arr.nama, email: arr.email, tryout: 'tryout'});
+		})		
+	} else {
+		res.redirect('/');
+	}	
+})
+//Profile end
 
 //Routes end
 
