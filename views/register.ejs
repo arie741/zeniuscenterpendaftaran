@@ -2,6 +2,7 @@
 <html lang="en">
 	<head>
 		<%- include('head'); -%>
+		<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 		<title>Zenius Center | Pendaftaran</title>
 	</head>
 	<body>
@@ -97,12 +98,19 @@
 								</div>
 							</div>
 							<div class="row">
+								<div class="div col-lg-2"></div>
+								<div class="col-lg-6">
+									<%- captcha %>
+									</script>
+								</div>
+							</div>
+							<div class="row">
 								<div class="col-12">
 									<% if (ermes){ %>
 									<div class="alert alert-danger" role="alert">
 										<%= ermes %>
-									</div>							
-									<%};%>		
+									</div>
+									<%};%>
 								</div>
 							</div>
 							<div class="row">
