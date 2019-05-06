@@ -30,8 +30,8 @@ var pgPool = new pg.Pool({
   port: 5432
 });  
 
-const app = express()
-const port = 62542
+const app = express();
+const port = 62542;
 
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
@@ -57,6 +57,8 @@ app.use(ExpressSessions({
 app.get('/', function(req, res, next){
 	if(req.session.uniqueId){
 		res.render('home', {uuid: enc.decrypt(req.session.uniqueId)});
+	} else {
+		res.render('home', {uuid: ''});
 	}
 })
 
