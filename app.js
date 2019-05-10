@@ -39,6 +39,33 @@ app.use("/", express.static(__dirname + '/views')); // Set all static assets in 
 app.set('views', './views'); // Set all static assets in /views folder
 app.set('view engine', 'ejs'); //Set all html extension to ejs(embedded javascript https://ejs.co/)
 
+//Midtrans Lib
+const midtransClient = require('midtrans-client');
+
+// Create Core API instance
+const myServerKey = 'Mid-server-Ngb96nsbPKRQD8f7fRVvEgoq';
+const myClientKey = 'Mid-client-HSuDacPXv6YxjmgI';
+let coreApi = new midtransClient.CoreApi({
+        isProduction : true,
+        serverKey : myServerKey,
+        clientKey : myClientKey
+    });
+
+// Create Snap API instance
+let snap = new midtransClient.Snap({
+        isProduction : true,
+        serverKey : myServerKey,
+        clientKey : myClientKey
+    });
+
+let apiClient = new midtransClient.Snap({
+        isProduction : true,
+        serverKey : myServerKey,
+        clientKey : myClientKey
+    });
+
+//Midtrans Lib Ends
+
 //Express Sessions
 app.use(ExpressSessions({
   store: new pgSession({
@@ -58,7 +85,7 @@ app.get('/', function(req, res, next){
 	if(req.session.uniqueId){
 		res.render('home', {uuid: enc.decrypt(req.session.uniqueId)});
 	} else {
-		res.render('home', {uuid: ''});
+		res.render('home');
 	}
 })
 
@@ -91,7 +118,7 @@ app.post('/register-request', recaptcha.middleware.verify, function(req, res, ne
 	            return next(err)
 	          }
 	          req.session.uniqueId = enc.encrypt(myuuid);
-	          res.redirect('/profile/' + myuuid)
+	          res.redirect('/profile/' + myuuid);
 	        })
 	      } 
 	    }) 
@@ -105,22 +132,132 @@ app.post('/register-request', recaptcha.middleware.verify, function(req, res, ne
   }  
 })
 //Registration end
+
 //Profile
 app.get('/profile/:uuid', function(req, res, next) {	
-	if(enc.decrypt(req.session.uniqueId) === req.params.uuid){
-		db.query(db.findProfileByUuid, [req.params.uuid], (err, resp) => {
-			if (err) {
-			 return next(err);
-			}
-			var arr = resp.rows[0];
-			res.render('profile', {uuid: enc.decrypt(req.session.uniqueId), nama: arr.nama, email: arr.email, tryout: 'tryout'});
-		})		
+	if((typeof req.session.uniqueId) != 'undefined'){
+		if(enc.decrypt(req.session.uniqueId) === req.params.uuid){//check if session uuid is the same as uuid parameter
+			db.query(db.findProfileByUuid, [req.params.uuid], (err, resp) => {
+				if (err) {
+				 return next(err);
+				}
+				var arr = resp.rows[0];
+				var tOrder = '';
+				db.query(db.findAccount, [req.session.uniqueId], function(err, respo){			
+					if(err){
+						return next(err);
+					}		
+					if(respo.rows[0]){
+						var accarr = respo.rows[0];
+						res.render('profile', {uuid: enc.decrypt(req.session.uniqueId), nama: arr.nama, email: arr.email, tryout: 'Tryout 23 May 2019', paid:'paid', accounts: {uname: accarr.uname, pwd: enc.decrypt(accarr.pwd)}});
+					} else {
+						let parameter = {
+						    "transaction_details": {
+						        "order_id": "arr.email-" + Math.floor(Math.random() * (+2000 - +1)) + +1 ,
+						        "gross_amount": 35000
+						    }, "customer_details": {
+					        "name": arr.nama,
+					        "email": arr.email,
+					        "phone": arr.phone,
+					        },
+						     "credit_card":{
+						        "secure" : true
+						    }
+						};
+
+						snap.createTransaction(parameter)
+						    .then((transaction)=>{
+						        // transaction token
+						        var mytoken = transaction.token;
+						        res.render('profile', {uuid: enc.decrypt(req.session.uniqueId), nama: arr.nama, email: arr.email, tryout: 'Tryout 23 May 2019', paid:'not paid' , mytoken: mytoken, clientKey: myClientKey});	      
+							})
+							.catch((e)=>{
+						        e.message // basic error message string
+						        e.httpStatusCode // HTTP status code e.g: 400, 401, etc.
+						        e.ApiResponse // JSON of the API response 
+						        e.rawHttpClientData // raw Axios response object
+						        apiClient.transaction.status("order-1" + arr.nama)
+								    .then((response)=>{
+								        if(response.transaction_status === "settlement"){
+							        		res.send('The payment has been paid!');
+							        	} else {
+							        		res.send('No payment found');
+							        	}
+								    });
+					        	
+					      	})
+					}
+				})
+				
+			})		
+		} else {
+			res.redirect('/');
+		}	
 	} else {
 		res.redirect('/');
-	}	
+	}
 })
-//Profile end
 
+//login
+app.get('/login', function(req, res, next){
+	if(req.session.uniqueId){
+		res.redirect('/');
+	} else {
+		var msg = req.query.valid;
+		res.render('login', {ermes: msg});
+	}
+	
+})
+
+app.post('/login-request', function(req, res, next){
+	if(req.session.uniqueId){
+		res.redirect('/')
+	} else {
+		db.query(db.findProfile, [req.body.email], function(err, resp){
+			if(err){
+				return next(err);
+			}
+			if ('undefined' === (typeof resp.rows[0])){
+				var str = encodeURIComponent('Password atau Email anda salah');
+				res.redirect('/login/?valid=' + str);
+			} else {
+				var arr = resp.rows[0];
+				if(enc.decrypt(arr.pwd) === req.body.pwd){		
+					req.session.uniqueId = enc.encrypt(arr.uuid);
+					if(req.session.uniqueId){
+						res.redirect('/profile/' + arr.uuid);
+					}
+				} else {
+					var str = encodeURIComponent('Password atau Email anda salah');
+					res.redirect('/login/?valid=' + str);
+				}
+			}
+			
+		})
+	}
+})
+
+//logout
+app.get('/logout', function(req, res, next){
+	if(req.session.uniqueId){
+		req.session.destroy(function(err) {
+		  res.redirect('/');
+		})
+	} else {
+		res.redirect('/');
+	}
+})
+
+app.get('/check', function(req, res, next){
+
+})
 //Routes end
+
+app.get('/status', function(req, res, next){
+	apiClient.transaction.status("order" + req.session.nama)
+    .then((response)=>{
+        res.send(response);
+    });
+})
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

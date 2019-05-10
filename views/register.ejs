@@ -19,6 +19,15 @@
 						<form action="/register-request" method="POST">
 							<div class="row">
 								<div class="col-lg-2">
+									<h5>Email</h5>
+								</div>
+								<div class="col-lg-6">
+									: <input maxlength="50" required type="email" name="email" placeholder="Email">
+									<div><i>Email digunakan untuk Login</i></div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-lg-2">
 									<h5>Nama</h5>
 								</div>
 								<div class="col-lg-6">
@@ -32,15 +41,7 @@
 								<div class="col-lg-6">
 									: <input maxlength="50" required type="text" name="alamat" placeholder="Alamat">
 								</div>
-							</div>
-							<div class="row">
-								<div class="col-lg-2">
-									<h5>Email</h5>
-								</div>
-								<div class="col-lg-6">
-									: <input maxlength="50" required type="email" name="email" placeholder="Email">
-								</div>
-							</div>
+							</div>							
 							<div class="row">
 								<div class="col-lg-2">
 									<h5>Nomor Hp</h5>
@@ -78,7 +79,7 @@
 									<h5>Instagram</h5>
 								</div>
 								<div class="col-lg-6">
-									: <input maxlength="50" required type="text" name="ig" placeholder="Instagram">
+									: <input maxlength="50" type="text" name="ig" placeholder="Instagram">
 								</div>
 							</div>
 							<div class="row">
@@ -86,7 +87,8 @@
 									<h5>Password</h5>
 								</div>
 								<div class="col-lg-6">
-									: <input maxlength="50" required type="password" name="pwd" placeholder="Password">
+									: <input pattern=".{5,50}" required type="password" name="pwd" placeholder="Password">
+									<div><i> Password harus diatas 5 karakter</i></div>
 								</div>
 							</div>
 							<div class="row">
@@ -94,7 +96,7 @@
 									<h5>Ulangi Password</h5>
 								</div>
 								<div class="col-lg-6">
-									: <input maxlength="50" required type="password" name="upwd" placeholder="Ulangi Password">
+									: <input pattern=".{5,50}" required type="password" name="upwd" placeholder="Ulangi Password">
 								</div>
 							</div>
 							<div class="row">

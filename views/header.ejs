@@ -13,12 +13,14 @@
       <nav id="nav-menu-container">
         <ul class="nav-menu">
           <li id="home-menu"><a href="/">Home</a></li>
-          <%if((typeof uuid) != 'undefined'){%>          
-            <li id="profile-menu"><a href="/profile/<%= typeof uuid != 'undefined' ? uuid : '' %>">Profile</a></li>
-          <%} else {%>
-            <li id="register-menu"><a href="/register">Pendaftaran</a></li>
-          <%}%>
           <li><a href="#contact">Contact</a></li>
+          <% if(typeof uuid === 'undefined'){%>          
+            <li id="register-menu"><a href="/register">Pendaftaran</a></li>
+            <li id="login-menu"><a href="/login">Login</a></li>
+          <%} else {%>
+            <li id="profile-menu"><a href="/profile/<%= typeof uuid != 'undefined' ? uuid : '' %>">Profile</a></li>
+            <li id="logout-menu"><a href="/logout">Logout</a></li>
+          <%}%>          
         </ul>
       </nav><!-- #nav-menu-container -->
     </div>

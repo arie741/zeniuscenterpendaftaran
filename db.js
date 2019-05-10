@@ -11,6 +11,8 @@ const pool = new Pool({
 const addProfile = 'insert into profiles (nama, alamat, phone, email, sekolah, kelas, jurusan, ig, pwd, uuid) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)';
 const findProfile = 'select * from profiles where email = $1'
 const findProfileByUuid = 'select * from profiles where uuid = $1'
+const addAccounts = 'insert into accounts (uuid, uname, pwd) values($1,$2,$3)'
+const findAccount = 'select * from accounts where uuid = $1'
 
 module.exports = {
 	query: (text, params, callback) => {
@@ -18,5 +20,7 @@ module.exports = {
   },
   addProfile,
   findProfile, 
-  findProfileByUuid
+  findProfileByUuid,
+  addAccounts,
+  findAccount
 }

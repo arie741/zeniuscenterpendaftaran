@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<%- include('head'); -%>
+		<title>Zenius Center | Login</title>
+	</head>
+	<body>
+		<%- include('header'); -%>
+		<main id="register-page" class="content-space">
+			<div class="container">
+				<div class="row">
+					<header class="section-header wow">
+						<h3>Login</h3>
+					</header>
+				</div>
+				<div class="row">
+					<div class="col-12">
+						<form action="/login-request" method="POST">
+							<div class="row">
+								<div class="col-lg-2">
+									<h5>Email</h5>
+								</div>
+								<div class="col-lg-6">
+									: <input maxlength="50" required type="email" name="email" placeholder="Email">
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-lg-2">
+									<h5>Password</h5>
+								</div>
+								<div class="col-lg-6">
+									: <input maxlength="50" required type="password" name="pwd" placeholder="Password">
+								</div>
+							</div>							
+							<div class="row">
+								<div class="col-12">
+									<% if ((typeof ermes) != 'undefined'){ %>
+									<div class="alert alert-danger" role="alert">
+										<%= ermes %>
+									</div>
+									<%};%>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-lg-2"></div>
+								<div class="col-lg-6">
+									<button type="Submit" class="btn btn-primary">Login</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</main>
+		<%- include('footer'); -%>
+		<a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+		<!-- Uncomment below i you want to use a preloader -->
+		<!-- <div id="preloader"></div> -->
+		<%- include('script'); -%>
+		<script>
+			$('#login-menu').addClass('menu-active');
+		</script>
+	</body>
+</html>

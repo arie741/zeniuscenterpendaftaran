@@ -16,6 +16,7 @@
     "express-recaptcha": "^5.0.0",
     "express-session": "^1.16.1",
     "express-validator": "^5.3.1",
+    "midtrans-client": "^1.0.3",
     "multer": "^1.4.1",
     "nodemon": "^1.19.0",
     "pg": "^7.10.0",
