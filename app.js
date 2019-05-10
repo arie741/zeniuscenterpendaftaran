@@ -149,12 +149,13 @@ app.get('/profile/:uuid', function(req, res, next) {
 					}		
 					if(respo.rows[0]){
 						var accarr = respo.rows[0];
-						res.render('profile', {uuid: enc.decrypt(req.session.uniqueId), nama: arr.nama, email: arr.email, tryout: 'Tryout 23 May 2019', paid:'paid', accounts: {uname: accarr.uname, pwd: enc.decrypt(accarr.pwd)}});
+						res.render('profile', {uuid: enc.decrypt(req.session.uniqueId), nama: arr.nama, email: arr.email, tryout: 'Tryout 23 May 2019', paid:'paid', accounts: {uname: enc.decrypt(accarr.uname), pwd: enc.decrypt(accarr.pwd)}});
 					} else {
+						var myOrder = "order-" + Math.floor(Math.random() * (+2000 - +1)) + +1;
 						let parameter = {
 						    "transaction_details": {
-						        "order_id": "arr.email-" + Math.floor(Math.random() * (+2000 - +1)) + +1 ,
-						        "gross_amount": 35000
+						        "order_id": myOrder ,
+						        "gross_amount": 1000
 						    }, "customer_details": {
 					        "name": arr.nama,
 					        "email": arr.email,
@@ -176,7 +177,7 @@ app.get('/profile/:uuid', function(req, res, next) {
 						        e.httpStatusCode // HTTP status code e.g: 400, 401, etc.
 						        e.ApiResponse // JSON of the API response 
 						        e.rawHttpClientData // raw Axios response object
-						        apiClient.transaction.status("order-1" + arr.nama)
+						        apiClient.transaction.status(myOrder)
 								    .then((response)=>{
 								        if(response.transaction_status === "settlement"){
 							        		res.send('The payment has been paid!');
@@ -248,9 +249,32 @@ app.get('/logout', function(req, res, next){
 	}
 })
 
-app.get('/check', function(req, res, next){
+//Add Profile if payment succeed
 
+app.get('/addProf/:uuid' ,function(req, res, next){
+	if(enc.decrypt(req.session.uniqueId) === req.params.uuid){
+		db.query(db.findProfileByUuid, [req.params.uuid], function(err, respo){
+			if(err){
+				return next(err);
+			}
+			var arr = respo.rows[0]
+			var myUname = arr.nama;
+			var lwUname = myUname.toLowerCase();
+			var trimUname = lwUname.trim();
+			var slcUname = trimUname.slice(0, 5);
+			db.query(db.addAccounts, [enc.encrypt(req.params.uuid), enc.encrypt(slcUname) ,enc.encrypt('tozeniuscenter119')], function(err, resp){
+				if(err){
+					return next(err);
+				}
+				res.redirect('/profile/' + req.params.uuid)
+			})
+		})
+			
+	} else {
+		res.redirect('/');
+	}		
 })
+
 //Routes end
 
 app.get('/status', function(req, res, next){
