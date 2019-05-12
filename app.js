@@ -1,4 +1,6 @@
 const express = require('express')
+//short Uuid 
+const shortid = require('shortid');
 //Body parser
 const bodyParser = require('body-parser');
 //Express session
@@ -262,7 +264,8 @@ app.get('/addProf/:uuid' ,function(req, res, next){
 			var lwUname = myUname.toLowerCase();
 			var trimUname = lwUname.trim();
 			var slcUname = trimUname.slice(0, 5);
-			db.query(db.addAccounts, [enc.encrypt(req.params.uuid), enc.encrypt(slcUname) ,enc.encrypt('tozeniuscenter119')], function(err, resp){
+			var uName = slcUname + shortid.generate();
+			db.query(db.addAccounts, [enc.encrypt(req.params.uuid), enc.encrypt(uName) ,enc.encrypt('tozeniuscenter119')], function(err, resp){
 				if(err){
 					return next(err);
 				}
@@ -275,13 +278,29 @@ app.get('/addProf/:uuid' ,function(req, res, next){
 	}		
 })
 
-//Routes end
-
-app.get('/status', function(req, res, next){
-	apiClient.transaction.status("order" + req.session.nama)
-    .then((response)=>{
-        res.send(response);
-    });
+//Admin Pages
+app.get('/admin', function(req, res, next){
+	if(req.session.uniqueId){
+		res.render('/')
+	} else {
+		var msg= req.query.valid;
+		res.render('admin', {ermes: msg});
+	}
 })
+
+app.post('/admin-login-request', function(req, res, next){
+	if(req.session.uniqueId){
+		res.redirect('/');
+	} else {	
+		if(req.body.pwd === 'zeniuscenter2019'){
+			res.send('success');
+		} else {
+			var str = encodeURIComponent('Admin Key salah');
+			res.redirect('/admin/?valid=' + str);
+		}
+	}
+})
+
+//Routes end
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
