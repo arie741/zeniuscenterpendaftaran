@@ -1,3 +1,13 @@
+ul {
+	list-style-type: none;
+}
+
+.acc-panel {
+	box-shadow: 5px 5px #333;
+	border:1px solid #333;
+	margin:10px 0 20px;
+}
+
 .content-space {
 	margin-top:120px;
 	margin-bottom:30px;

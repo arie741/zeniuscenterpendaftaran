@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<%- include('head'); -%>
+		<title>Zenius Center | Admin Home</title>
+	</head>
+	<body>
+		<%- include('admin-header'); -%>
+		<main id="register-page" class="content-space">
+			<div class="container">
+				<div class="row">
+					<div class="col-12">
+						<h3>Welcome Admin!</h3>
+					</div>
+				</div>				
+				<div class="row">
+					<header class="section-header wow ">
+						<h3>Tambah Account</h3>
+					</header>
+				</div>
+				<div class="row">					
+					<div class="col-12">
+						<form action="/admin-request" method="POST">
+							<div class="row">
+								<div class="col-lg-2">
+									<h5>Email</h5>
+								</div>
+								<div class="col-lg-6">
+									: <input maxlength="50" required type="email" name="email" placeholder="Email">
+								</div>
+							</div>
+							
+							<div class="row">
+								<div class="col-12">
+									<% if ((typeof ermes) != 'undefined'){ %>
+									<div class="alert alert-danger" role="alert">
+										<%= ermes %>
+									</div>
+									<%};%>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-12">
+									<% if ((typeof succmes) != 'undefined'){ %>
+									<div class="alert alert-success" role="alert">
+										<%= succmes %>
+									</div>
+									<%};%>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-lg-2"></div>
+								<div class="col-lg-6">
+									<button type="Submit" class="btn btn-primary">Daftar</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+				<br>
+				<br>
+				<div class="row">
+					<div class="col-12">
+						<form action="/admin-search-request" method="POST">
+							<div class="row">
+								<div class="col-lg-12">
+									<input name="searchq" type="text" placeholder="Search">
+									<button type="Submit" class="btn btn-primary">Search</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-12">
+						<% if ((typeof userlist) != 'undefined'){ %>
+							<% userlist.forEach(function(user){ %>
+								<div class="row acc-panel">
+									<div class="col-12">
+										<ul>
+											<li>Email: <%= myEmail %></li>
+											<li>UUID: <%= user.uuid %></li>
+											<li>Username: <b><%= user.uname %></b></li>
+											<li>Password: <b> <%= user.pwd %></b></li>
+											<li><button type="button" class="btn btn-danger" data-toggle="modal" data-target="#dmod<%= user.uname %>">Delete</button></li>
+										</ul>
+									</div>
+								</div>
+								<!-- Modal -->
+								<div class="modal fade" id="dmod<%= user.uname %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+								  <div class="modal-dialog" role="document">
+								    <div class="modal-content">
+								      <div class="modal-header">
+								        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+								        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								          <span aria-hidden="true">&times;</span>
+								        </button>
+								      </div>
+								      <div class="modal-body">
+								        Yakin mau menghapus account ini?
+								      </div>
+								      <div class="modal-footer">
+								        <button type="button" class="btn btn-success" data-dismiss="modal">Tidak</button>
+								        <a href="/delete-acc/<%= user.enUname %>" type="button" class="btn btn-danger">Ya</a>
+								      </div>
+								    </div>
+								  </div>
+								</div>																						
+						<%})};%>
+					</div>
+				</div>
+
+				
+
+			</div>
+		</main>
+		<%- include('footer'); -%>
+		<a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+		<!-- Uncomment below i you want to use a preloader -->
+		<!-- <div id="preloader"></div> -->
+		<%- include('script'); -%>
+		<script>
+			$('#register-menu').addClass('menu-active');
+		</script>
+	</body>
+</html>

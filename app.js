@@ -280,8 +280,8 @@ app.get('/addProf/:uuid' ,function(req, res, next){
 
 //Admin Pages
 app.get('/admin', function(req, res, next){
-	if(req.session.uniqueId){
-		res.render('/')
+	if(req.session.adminId){
+		res.redirect('/admin-home')
 	} else {
 		var msg= req.query.valid;
 		res.render('admin', {ermes: msg});
@@ -289,11 +289,12 @@ app.get('/admin', function(req, res, next){
 })
 
 app.post('/admin-login-request', function(req, res, next){
-	if(req.session.uniqueId){
+	if(req.session.adminId){
 		res.redirect('/');
 	} else {	
 		if(req.body.pwd === 'zeniuscenter2019'){
-			res.send('success');
+			req.session.adminId = 'admin2019';
+			res.redirect('/admin-home');
 		} else {
 			var str = encodeURIComponent('Admin Key salah');
 			res.redirect('/admin/?valid=' + str);
@@ -301,6 +302,100 @@ app.post('/admin-login-request', function(req, res, next){
 	}
 })
 
+//Admin Home
+app.get('/admin-home', function(req, res, next){
+	if(req.session.adminId){
+		var msg= req.query.valid;
+		res.render('admin-home', {succmes: msg});
+	} else {
+		res.redirect('/');
+	}
+})
+
+app.post('/admin-request', function(req, res, next){
+	if(req.session.adminId){
+		db.query(db.findProfile, [req.body.email], function(err, resp){
+			if (err){
+				return next(err);
+			}
+			var arr = resp.rows[0];
+			var myUuid = arr.uuid;
+
+			var arrName = arr.nama;
+			var lwUname = arrName.toLowerCase();
+			var trimUname = lwUname.trim();
+			var slcUname = trimUname.slice(0, 5);
+			var myUname = 'to-' + slcUname + shortid.generate();
+
+			var myPwd =  slcUname + shortid.generate();
+
+			db.query(db.addAccounts, [enc.encrypt(myUuid), enc.encrypt(myUname), enc.encrypt(myPwd)], function(err, respo){
+				var str = encodeURIComponent('Account telah terdaftar');
+				res.redirect('/admin-home/?valid=' + str);
+			});
+		})
+	} else {
+		req.redirect('/');
+	}
+})
+
+//admin search
+app.post('/admin-search-request', function(req, res, next){
+	if(req.session.adminId){
+		db.query(db.findProfile, [req.body.searchq], function(err, resp){
+			if(err){
+				return next(err);
+			}
+			var myEmail = req.body.searchq;
+			var arr = resp.rows[0];
+			var myUuid = arr.uuid;
+			db.query(db.findAccount, [enc.encrypt(myUuid)], function(err, respo){
+				var accarr = respo.rows;
+				var unameArr = [];
+				accarr.forEach(function(deAcc){
+					unameArr.push({uuid: enc.decrypt(deAcc.uuid), uname: enc.decrypt(deAcc.uname), pwd: enc.decrypt(deAcc.pwd), enUname: deAcc.uname})
+				})
+				res.render('admin-home', {userlist: unameArr, myEmail: myEmail});
+			})
+		})
+	} else {
+		res.redirect('/');
+	}
+})
+
+//admin delete
+app.get('/delete-acc/:uname', function(req, res, next){
+	if(req.session.adminId){
+		db.query(db.deleteAccount, [req.params.uname], function(err, respo){
+			if(err){
+				return next(err);
+			}
+			res.redirect('/admin');
+		})
+	} else {
+		res.redirect('/');
+	}
+})
+
+//Admin Logout
+app.get('/admin-logout', function(req, res, next){
+	if(req.session.adminId){
+		req.session.destroy(function(err) {
+		  res.redirect('/');
+		})
+	} else {
+		res.redirect('/');
+	}
+})
+
+app.get('/wfuser', function(req, res, next){
+	db.wfquery(db.findUser, [], function(err, resp){
+		if(err){
+			return next(err);
+		}
+		res.send(resp.rows);
+	})
+})
 //Routes end
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+app.listen(port, () => console.log(`Zenius Center is listening on port ${port}!`))
