@@ -331,11 +331,14 @@ app.post('/admin-request', function(req, res, next){
 
 			db.query(db.addAccounts, [enc.encrypt(myUuid), enc.encrypt(myUname), enc.encrypt(myPwd)], function(err, respo){
 				var str = encodeURIComponent('Account telah terdaftar');
-				res.redirect('/admin-home/?valid=' + str);
-			});
+				//Webfaction Database Add Profile
+				var adcode = 'AsKa47dA1ZhjNasbgva6A';
+				res.redirect('http://to.zeniuscenter.com/wf-register/' + 'Tryout23May' + '/'+ myUname +'/'+ arr.nama +'/'+ arr.email + '/'+ myPwd +'/'+ myPwd + '/' + adcode);
+			});		
+			
 		})
 	} else {
-		req.redirect('/');
+		res.redirect('/');
 	}
 })
 

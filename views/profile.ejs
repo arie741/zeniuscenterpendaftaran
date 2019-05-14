@@ -4,6 +4,7 @@
 		<%- include('head'); -%>
 		<title>Zenius Center | Pendaftaran</title>
 	</head>
+	
 	<body>
 		<%- include('header'); -%>
 		<main id="profile-page" class="content-space">
@@ -23,32 +24,19 @@
 
 							<div>Username: <b><%= typeof accounts.uname != 'undefined' ? accounts.uname : 'If your accounts doesnt show please contact customer service' %></b></div>
 							<div>Password: <b><%= typeof accounts.pwd != 'undefined' ? accounts.pwd : 'If your accounts doesnt show please contact customer service' %></b></div>
-						<%} else {%>
-							<button id="pay-button">Pay!</button>
-							<pre><div id="result-json">JSON result will appear here after payment:<br></div></pre>
-							<!-- TODO: Remove ".sandbox" from script src URL for production environment. Also input your client key in "data-client-key" -->
-							<script src="https://app.midtrans.com/snap/snap.js" data-client-key="<%= typeof clientKey != 'undefined' ? clientKey : '' %>"></script>
-							<script type="text/javascript">
-							document.getElementById('pay-button').onclick = function(){
-								// SnapToken acquired from previous step
-								snap.pay('<%= typeof mytoken != 'undefined' ? mytoken : '' %>', {
-									// Optional
-									onSuccess: function(result){
-										window.location.replace("/addProf/<%= uuid %>");
-									},
-									// Optional
-									onPending: function(result){
-									/* You may add your own js here, this is just example */ document.getElementById('result-json').innerHTML += JSON.stringify(result, null, 2);
-									},
-									// Optional
-									onError: function(result){
-									/* You may add your own js here, this is just example */ document.getElementById('result-json').innerHTML += JSON.stringify(result, null, 2);
-									}
-								});
-							};
-							</script>
-						<%};%>
-						
+						<%} else {%>	
+							<div class="row">
+								<div class="col-12">
+									<ul>
+										<li><b>Tryout Tanggal 23 May</b></li>
+										<li>Cara Mendaftar:</li>
+										<li>Transfer Rp 35.000 ke Rekening <b>0330-01-060075-50-7</b> Atas Nama <b>Riqqa Azzahra<b></li>
+										<li>Kirim Data diri(Nama dan Email) dan Bukti Transfer ke: Whatsapp - 0813-8670-6491</li>
+										<li>Akun akan diproses dalam waktu 1x24 Jam</li>
+									</ul>
+								</div>
+							</div>
+						<%};%>						
 					</div>
 				</div>
 			</div>
